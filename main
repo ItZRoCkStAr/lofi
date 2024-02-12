@@ -1,0 +1,35 @@
+const express = require('express');
+const app = express();
+const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
+const path = require('path');
+const Tone = require('tone');
+
+app.use(express.static('public'));
+
+// Function to generate lofi beat
+function generateLofiBeat() {
+    const synth = new Tone.Synth().toMaster();
+
+    // Your lofi beat generation logic here
+    // For simplicity, let's generate a simple chord progression
+    const chords = ['C4', 'E4', 'G4', 'B4'];
+    const durations = ['2n', '4n', '2n', '1n'];
+    const sequence = new Tone.Sequence((time, note) => {
+        synth.triggerAttackRelease(note, '8n', time);
+    }, chords).start(0);
+
+    Tone.Transport.bpm.value = 60; // Adjust tempo as needed
+    Tone.Transport.start();
+}
+
+// Route to generate lofi beat
+app.get('/generate', (req, res) => {
+    generateLofiBeat();
+    res.send('Generating lofi beat...');
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
